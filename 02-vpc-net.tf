@@ -95,3 +95,23 @@ resource "aws_security_group" "todo_alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "todo_ecs_tasks" {
+  name        = "ecs-tasks-sg"
+  vpc_id      = aws_vpc.todo_vpc.id
+  description = "allow inbound access from the ALB only"
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 5000
+    to_port         = 5000
+    security_groups = [aws_security_group.todo_alb_sg.id]
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
